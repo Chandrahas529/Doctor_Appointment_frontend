@@ -43,7 +43,7 @@ function Section1({ setActive }){
                 <h2><Link to="/appointment"><button onClick={() => { setActive(3)}} className='appoint'>Make an appointment</button></Link></h2>
             </div>
             <div className='sect1-img'>
-                <img src={imgsrc} alt='hero image' className='doc1'/>
+                <img src={imgsrc} alt='hero' className='doc1'/>
             </div>
 
         </div>
