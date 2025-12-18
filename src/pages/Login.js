@@ -43,7 +43,7 @@ function Login() {
     return (
         <div className="outer-ctn">
             <div className="inner-ctn">
-                <img className="login-img" src={src1} />
+                <img className="login-img" alt="profile" src={src1} />
                 <div className="login-sec">
                     <div className="c1" id="c1">
                         <span className="log">Login</span>
