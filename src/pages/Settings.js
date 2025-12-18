@@ -1,5 +1,3 @@
-import Appoinments from "./Appointments";
-import src from '../images/empty.png'
 import './Settings.css';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -22,10 +20,6 @@ function Settings() {
 function Appointments() {
     const userid = JSON.parse(localStorage.getItem('user'))._id;
     const [list, setList] = useState([]);
-    const [doc, setDoc] = useState([]);
-    useEffect(() => {
-        getAppoints()
-    }, [])
     const getAppoints = async () => {
         let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/appoints/` + userid);
         result = await result.json();
@@ -40,14 +34,30 @@ function Appointments() {
         }));
         setList(combinedData);
     }
+    useEffect(() => {
+        const getAppoints = async () => {
+            let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/appoints/` + userid);
+            result = await result.json();
+            const newDataPromises = result.map(item =>
+                fetch(`${process.env.REACT_APP_BACKEND_URL}/${item.doctorId}`).then(res => res.json())
+            );
+            const newData = await Promise.all(newDataPromises);
+            const combinedData = result.map((item, index) => ({
+                ...item,
+                src: newData[index].src,
+                speciallistof: newData[index].speciallistof
+            }));
+            setList(combinedData);
+        }
+        getAppoints()
+    }, [userid])
     const appointC = async (id) => {
-        console.log(id)
         let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/appointstatus/` + id, {
             method: "put",
             headers: { 'Content-Type': 'application/json' },
             body: ''
         });
-        console.log(await result.json())
+        await result.json()
         getAppoints();
     }
     return (<>
@@ -64,7 +74,7 @@ function Appointments() {
                                     {(res.status === "Pending") ? <button onClick={() => { appointC(res._id) }} className="cancel">Cancel</button> : ''}
                                 </div>
                             </div>
-                            <div className="right-w"><div className="ig"><img src={require('../Doctors/' + res.src)} /></div></div>
+                            <div className="right-w"><div className="ig"><img alt='Profile' src={require('../Doctors/' + res.src)} /></div></div>
                         </div>
                     )}
             </div>
@@ -79,7 +89,7 @@ function Userdetails() {
     const [mobile, setMobile] = useState(auth.mobile)
     const [password, setPassword] = useState('*******');
     const [image, setImage] = useState('')
-    const [dp, setDp] = useState(auth.src)
+    const dp = auth.src;
     function changeName(n) {
         document.getElementsByClassName('invisible')[n].disabled = false;
         document.getElementsByClassName('btns')[n].style.display = 'flex';
@@ -117,7 +127,7 @@ function Userdetails() {
         if (password === '') {
 
         } else {
-            let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/userpassword/` + userid, {
+            await fetch(`${process.env.REACT_APP_BACKEND_URL}/userpassword/` + userid, {
                 method: 'put',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ password })
@@ -157,7 +167,7 @@ function Userdetails() {
                 <div className="list-detail">Mobile No - <div><div><input className="invisible" type="text" disabled value={mobile} onChange={(e) => { setMobile(e.target.value) }} /> <i onClick={() => { changeName(2) }} className="fa-solid fa-pencil pointers"></i></div><div className="btns"><button onClick={() => { saveName(2) }} className="save-btn">Save</button><button onClick={() => { cancelName(2) }} className="cancel-btn">Cancel</button></div></div></div>
                 <div className="list-detail">Password - <div><div><input className="invisible" type="text" disabled value={password} onChange={(e) => { setPassword(e.target.value) }} /> <i onClick={() => { changePassword(3) }} className="fa-solid fa-pencil pointers"></i></div><div className="btns"><button onClick={() => { savePassword(3) }} className="save-btn">Save</button><button onClick={() => { cancelPassword(3) }} className="cancel-btn">Cancel</button></div></div></div>
                 <div>Profile Picture</div>
-                <div className="your-dp-ctn"><img className="your-dp" src={require('../userimages/'+dp)} /><i className="fa-solid fa-circle-plus dp-c"><input type='file' onChange={(e) => { uploadImg(e) }} className="upload" /></i>
+                <div className="your-dp-ctn"><img className="your-dp" alt='user profile' src={(dp)?require('../userimages/'+dp):require("../profile.jpeg")} /><i className="fa-solid fa-circle-plus dp-c"><input type='file' onChange={(e) => { uploadImg(e) }} className="upload" /></i>
                     <div className="btn"><button onClick={() => { saveImg() }} className="save-btn">Upload</button><button onClick={() => { cancelImg() }} className="cancel-btn">Cancel</button></div>
                 </div>
             </div>

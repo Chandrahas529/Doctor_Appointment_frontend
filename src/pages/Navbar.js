@@ -1,13 +1,13 @@
 import './Navbar.css';
 import { Link, Outlet, useLocation} from "react-router-dom";
 import logo from '../images/logo.png';
-import { memo, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 function Navbar() {
     const location = useLocation();
     const auth = localStorage.getItem('user');
-    const loc = window.location.pathname + window.location.hash;
     const [active, setActive] = useState(0);
     useEffect(()=>{
+        const loc = window.location.pathname + window.location.hash;
         if (loc === "/Doctor_appointment#/" || loc === "/Doctor_appointment")
             setActive(1)
         else if (loc === "/Doctor_appointment#/details")
@@ -24,7 +24,7 @@ function Navbar() {
     return (<>
         <nav>
             <div className="nav-left">
-                <img src={logo} className='logo' />
+                <img src={logo} alt='logo' className='logo' />
                 <div>CS Hospital</div>
             </div>
             <div className="nav-right">

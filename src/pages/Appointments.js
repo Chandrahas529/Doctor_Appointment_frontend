@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Appointments.css'
 import { useState } from "react";
@@ -12,7 +12,7 @@ function Appoinments() {
         })
     },[])
     var n = 1;
-    if (dataReceived != "") {
+    if (dataReceived !== "") {
         n = dataReceived.id;
     }
     else {
@@ -45,13 +45,15 @@ function Leftlist({ selectdoc }) {
             behavior: 'smooth'
         });
     };
-    const updatelist = () => {
+    
+    useEffect(() => {
+        const updatelist = (selectdoc) => {
         if (search === '') {
             // Show all doctors if the search term is empty
             setList(Doctorslist.map(doc => (
                 <div key={doc._id} className="appoint-card">
                     <div className="profile-ctn">
-                        <img className="profile-pic" src={require(`../Doctors/${doc.src}`)} />
+                        <img className="profile-pic" alt={doc.src.name} src={require(`../Doctors/${doc.src}`)} />
                     </div>
                     <div className="small-bio">
                         <div className="d-name">{doc.name}</div>
@@ -68,7 +70,7 @@ function Leftlist({ selectdoc }) {
             ).map(doc => (
                 <div key={doc.id} className="appoint-card">
                     <div className="profile-ctn">
-                        <img className="profile-pic" src={require(`../Doctors/${doc.src}`)} />
+                        <img className="profile-pic" alt='profile pic' src={require(`../Doctors/${doc.src}`)} />
                     </div>
                     <div className="small-bio">
                         <div className="d-name">{doc.name}</div>
@@ -80,7 +82,6 @@ function Leftlist({ selectdoc }) {
             setList(filtered);
         }
     }
-    useEffect(() => {
         updatelist()
     }, [search, Doctorslist])
     return (
@@ -106,17 +107,21 @@ function SelectedDoctor({ idc, dName, dId }) {
     const [Doctorslists, setDoc] = useState('');
     const [img, setImg] = useState('doc1.jpeg')
     useEffect(() => {
+        async function getDetail() {
+        let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/doctordetails/` + idc);
+            result = await result.json();
+            setDoc(result)
+            let Img = await result.src
+            setImg(Img)
+        }
         getDetail();
     }, [idc]);
-    async function getDetail() {
-        let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/doctordetails/` + idc);
-        result = await result.json();
-        setDoc(result)
-        let Img = await result.src
-        setImg(Img)
-    }
-    dName(Doctorslists.name);
-        dId(Doctorslists._id);
+    useEffect(() => {
+        if (Doctorslists) {  // only run when data is loaded
+            dName(Doctorslists.name || '');
+            dId(Doctorslists._id || '');
+        }
+    }, [Doctorslists, dName, dId]);
     return (<div className="selected-doctor">
         <div className="selected-bio">
             <div className="selected-name">Make an appoinment with <b>{Doctorslists.name}</b></div>
@@ -129,10 +134,10 @@ function SelectedDoctor({ idc, dName, dId }) {
 }
 
 function Selecttime({ dName, dId }) {
-    const [date, setDate] = useState(new Date);
+    const date = new Date();
     const [selectedDate, setSelectedDate] = useState(date);
     const [period, setPeriod] = useState('Select the time slot');
-    const [bdate, setBdate] = useState('');
+    const bdate = '';
     const [d, setD] = useState('');
 
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -254,16 +259,18 @@ function Morning({ timer, dt, dId }) {
     else {
         userid = 'unknown';
     }
-    useEffect(() => { slots() }, [dId, dt])
-    async function slots() {
-        let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/slots`, {
-            method: 'post',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ date: dt, doctorId: dId })
-        })
-        result = await result.json();
-        setSlot(result);
-    }
+    useEffect(() => { 
+        async function slots() {
+            let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/slots`, {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date: dt, doctorId: dId })
+            })
+            result = await result.json();
+            setSlot(result);
+        }
+        slots() 
+    }, [dId, dt])
     return (
         <div>
             <h3>Morning Slot</h3>
@@ -380,16 +387,18 @@ function Afternoon({ timer, dt, dId }) {
     else {
         userid = 'unknown';
     }
-    useEffect(() => { slots() }, [dId, dt])
-    async function slots() {
-        let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/slots`, {
-            method: 'post',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ date: dt, doctorId: dId })
-        })
-        result = await result.json();
-        setSlot(result);
-    }
+    useEffect(() => {
+        async function slots() {
+            let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/slots`, {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date: dt, doctorId: dId })
+            })
+            result = await result.json();
+            setSlot(result);
+        }
+         slots() 
+    }, [dId, dt])
     return (
         <div>
             <h3>Afternoon Slot</h3>
@@ -507,16 +516,18 @@ function Evening({ timer, dt, dId }) {
     else {
         userid = 'unknown';
     }
-    useEffect(() => { slots() }, [dId, dt])
-    async function slots() {
-        let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/slots`, {
-            method: 'post',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ date: dt, doctorId: dId })
-        })
-        result = await result.json();
-        setSlot(result);
-    }
+    useEffect(() => { 
+        async function slots() {
+            let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/slots`, {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date: dt, doctorId: dId })
+            })
+            result = await result.json();
+            setSlot(result);
+        }
+        slots() 
+    }, [dId, dt])
     return (
         <div>
             <h3>Evening Slot</h3>
@@ -634,7 +645,7 @@ function PatientForm({ bdate, dId, dName, timer }) {
         const auth = localStorage.getItem('user');
         const d = document.getElementById('date').innerText;
         if (auth) {
-            if (pAge != "" && pName != "" && timer != "Select the time slot") {
+            if (pAge !== "" && pName !== "" && timer !== "Select the time slot") {
                 let result = await fetch(`${process.env.REACT_APP_BACKEND_URL}/appointment`, {
                     method: 'post',
                     body: JSON.stringify({
@@ -651,7 +662,7 @@ function PatientForm({ bdate, dId, dName, timer }) {
                     }),
                     headers: { 'Content-Type': 'application/json' }
                 })
-                result = await result.json();
+                await result.json();
                 navigate('/settings');
             }
         }
