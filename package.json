@@ -1,8 +1,8 @@
 {
-  "name": "hostpital",
+  "name": "hospital",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Chandrahas529.github.io/Doctor_appointment",
+  "homepage": "https://cshospital.netlify.app",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
