@@ -7,7 +7,7 @@ function Navbar() {
     const auth = localStorage.getItem('user');
     const [active, setActive] = useState(0);
     useEffect(()=>{
-        const loc = window.location.pathname + window.location.hash;
+        const loc = window.location.hash;
         if (loc === "#/" || loc === "")
             setActive(1)
         else if (loc === "#/details")
