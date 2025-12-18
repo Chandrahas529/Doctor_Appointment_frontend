@@ -43,7 +43,7 @@ function Section1({ setActive }){
                 <h2><Link to="/appointment"><button onClick={() => { setActive(3)}} className='appoint'>Make an appointment</button></Link></h2>
             </div>
             <div className='sect1-img'>
-                <img src={imgsrc} className='doc1'/>
+                <img src={imgsrc} alt='hero image' className='doc1'/>
             </div>
 
         </div>
@@ -53,7 +53,7 @@ function Section2(){
     return (
         <div className='sec2'>
             <div className='sec2-left'>
-                <img src={imgsrc1} className='doc-talk'/>
+                <img src={imgsrc1} alt='doctor' className='doc-talk'/>
             </div>
             <div className='sec2-right'>
                 <h2>We Are <span className='tag'>CSians</span> A Medical Clinic</h2>
@@ -81,7 +81,7 @@ function Card(){
     ]
     const lists = detailss.map((detail)=>
         <div key={detail.title} className='card'>
-            <div className='img-circle'><img src={detail.imgid}/></div>
+            <div className='img-circle'><img alt={detail.title} src={detail.imgid}/></div>
             <h2 className='card-title'>{detail.title}</h2>
             <div className='card-desc'>{detail.description}</div>
         </div>
@@ -101,12 +101,12 @@ function Section4(){
 function Section5(){
     return <div className='sec5'>
         <div className='sec5-left'>
-            <img className='tools1' src={tools1} />
+            <img alt='tools' className='tools1' src={tools1} />
             <div className='down-tools'>
-                <img className='tools2' src={tools2}/>
-                <img className='tools3' src={tools3}/>
+                <img alt='tools' className='tools2' src={tools2}/>
+                <img alt='tools' className='tools3' src={tools3}/>
             </div>
-            <img className='tools1' src={tools4} />
+            <img alt='tools' className='tools1' src={tools4} />
         </div>
         <div className='sec5-right'>
             <Cardlist />
@@ -115,7 +115,6 @@ function Section5(){
 }
 function Cardlist(){
     const lists = ["Neurology","Opthalmology","Nuclear Magnetic","Surgical","Cardiology","X-ray","Dental","Traumatology","Cardiology"];
-    var i = 1;
     return lists.map((list,index) => 
         <div key={index} className='cardlist'><i className="fa-solid fa-stethoscope icons"></i>
                 <h2 className='cardlisttitle'>{list}</h2>
@@ -128,7 +127,7 @@ function Footer(){
     return (<footer className='footer'>
         <div className='foot-left'>
             <div className='logo-big'>
-                <img className='brand' src={logo}/>
+                <img alt='brand' className='brand' src={logo}/>
                 <div className='hospital'>CS Hospital</div>
             </div>
             <div>Our social media links</div>
